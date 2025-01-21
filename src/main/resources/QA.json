@@ -1,0 +1,137 @@
+{
+    "lectures": [
+      {
+        "title": "Processes - Lecture 1",
+        "questions": [
+          {
+            "question": "What is an interrupt?",
+            "answer": "Change the normal flow of computation; Switch from user to kernel mode."
+          },
+          {
+            "question": "What is a system call?",
+            "answer": "Allows running kernel code to access OS services; can be implemented in terms of interrupts."
+          },
+          {
+            "question": "Define a process.",
+            "answer": "An abstraction of a running instance of a program with control structures and resources assigned."
+          },
+          {
+            "question": "What is the response time of a process?",
+            "answer": "The elapsed time from its creation before it first gets access to the CPU."
+          },
+          {
+            "question": "What is effective utilisation?",
+            "answer": "The fraction of time the CPU is doing useful work, not context switching."
+          },
+          {
+            "question": "Where is process administration information stored?",
+            "answer": "In the process control block (PCB)."
+          },
+          {
+            "question": "What does the process table contain?",
+            "answer": "An array of PCBs, with each process having a unique PID."
+          },
+          {
+            "question": "What does a process’ memory image contain?",
+            "answer": "The program code, data segment, stack, and heap."
+          },
+          {
+            "question": "Give an example of process memory could be shared between multiple processes",
+            "answer": "The program code (could be shared between multiple processes running the same code)."
+          },
+          {
+            "question": "Every process has its own    , in which the     and      are placed at      sides to allow them to grow",
+            "answer": "Every process has its own logical address space, in which the stack and heap are placed at opposite sides to allow them to grow"
+          },
+          {
+            "question": " State transitions include:\n 1 New → ready:\n2 Running → blocked:\n 3 Ready → running:\n4 Blocked → ready:\n5 Running → ready:\n6 Running → terminated:",
+
+            "answer": "          1 New → ready: admit the process and commit to execution\n          2 Running → blocked: e.g. process is waiting for input or carried out a\n          system call\n          3 Ready → running: the process is selected by the process scheduler\n          4 Blocked → ready: event happens, e.g. I/O operation has finished\n          5 Running → ready: the process surrenders the CPU, for example due to an\n          interrupt or by pause\n          6 Running → terminated: process has finished, e.g. program ended or\n          exception encountered,"
+          },
+          {
+            "question": "Multi-programming is achieved by: ",
+            "answer": "interleaving the execution of processes,\ndividing the CPU time into time-slices"
+          },
+          {
+            "question": "Control is exchanged between processes via a procedure known as: ",
+            "answer": "Context switching."
+          },
+          {
+            "question": "What is context switching?",
+            "answer": "Saving the state of the old process and loading the state of the new process, causing overhead.\n Saved ⇒ the process control block is updated\n(Re-)started ⇒ the process control block read"
+          },
+          {
+            "question": "True parallelism requires: ",
+            "answer": "Hardware support."
+          },
+          {
+            "question": "What is the trade-off in context switching time slices?",
+            "answer": "Short slices = good response time but low utilisation; Long slices = poor response time but better utilisation."
+          },
+          {
+            "question": "What are the attributes of a process control block?",
+            "answer": "Process identification(PID, UID, Parent PID);\nprocess control information(process state, scheduling information, etc.);\n and process state information (user registers, program counter, stack pointer, program status word, memory management information, files, etc.)\n"
+          },
+          {
+            "question": "Process control blocks are               , they are     and only accessible in      mode! Why is this?",
+            "answer": "Process control blocks are kernel data structures, i.e. they are protected and only accessible in kernel mode!\n- Allowing user applications to access them directly could compromise their integrity \n- The operating system manages them on the user’s behalf through system calls (e.g. to set process priority)"
+          },
+          {
+            "question": "To switch between processes the kernel will:",
+            "answer": "          1 Save process state (PC, registers, MMU, . . . ) to PCB.\n2 Update PCB state (running 7→ ready / blocked / terminated).\n3 Record PID in appropriate queue (ready / blocked).\n4 Run scheduler, select new PID from ready queue.\n5 Update PCB state (ready 7→ running).\n6 Restore state from PCB (PC, registers, MMU, . . . ).\n7 Return control to running the new process.,\n"
+          },
+
+          {
+            "question": "How does fork() behave?",
+            "answer": "Creates an exact copy of the current process, returning the child PID to the parent and 0 to the child."
+          }
+        ]
+      },
+      {
+        "title": "Memory - Lecture 1",
+        "questions": [
+          {
+            "question": "What are the components of a typical memory hierarchy?",
+            "answer": "Registers, L1/L2/L3 cache, main memory (RAM), and disks. Higher memory is faster, more expensive, and volatile, while lower memory is slower, cheaper, and non-volatile."
+          },
+          {
+            "question": "What responsibilities does the operating system have in memory management?",
+            "answer": "Allocate/deallocate memory for processes, track used/unused memory, distribute memory between processes, simulate an infinitely large memory space, control access in multi-programming, and move data between memory and disk."
+          },
+          {
+            "question": "What are the two main approaches to memory partitioning?",
+            "answer": "Contiguous and non-contiguous memory management. Contiguous allocates memory in a single block, while non-contiguous uses multiple blocks that may be placed anywhere in physical memory."
+          },
+          {
+            "question": "What is mono-programming?",
+            "answer": "A memory management approach with no abstraction, where a fixed region is allocated to the OS, and the remaining memory is reserved for one single process with direct access to physical memory."
+          },
+          {
+            "question": "What are the shortcomings of mono-programming?",
+            "answer": "Direct access to physical memory may compromise OS memory, low resource utilisation, no protection between processes, and burden on programmers to manage overlays."
+          },
+          {
+            "question": "What is the probabilistic model of multi-programming?",
+            "answer": "CPU utilisation is 1 minus the probability that all processes are waiting for I/O simultaneously. For example, with n processes and I/O wait probability p, CPU utilisation is 1 − p^n."
+          },
+          {
+            "question": "What are fixed partitions with equal size used for?",
+            "answer": "Static equal-sized partitions improve resource utilisation but can cause internal fragmentation and low memory efficiency."
+          },
+          {
+            "question": "What are the benefits of non-equal fixed partitions?",
+            "answer": "They reduce internal fragmentation and allow more tailored memory allocation to processes."
+          },
+          {
+            "question": "What are the allocation methods for fixed partitions?",
+            "answer": "Using private queues assigns processes to the smallest suitable partition, reducing fragmentation but risking starvation. A shared queue allows flexibility but increases fragmentation."
+          },
+          {
+            "question": "What is the main takeaway from this lecture?",
+            "answer": "Memory management has evolved from mono-programming with absolute addressing to multi-programming with fixed (non-)equal partitions to improve resource utilisation and CPU efficiency."
+          }
+        ]
+      }
+    ]
+  }
+  
