@@ -88,6 +88,285 @@
         ]
       },
       {
+        "title": "Processes - Lecture 2",
+        "questions": [
+          {
+            "question": "The OS is responsible for managing and scheduling processes:\nDecide...\nDecide...\nDecide...",
+            "answer": "Decide when to admit processes to the system (new → ready)\nDecide which process to run next (ready → run)\nDecide when and which processes to interrupt (running → ready)"
+          },
+          {
+            "question":"It relies on the      (dispatcher) to decide which process to run next, which uses a      algorithm to do so",
+            "answer":"It relies on the scheduler (dispatcher) to decide which process to run next, which uses a scheduling algorithm to do so"
+          },
+          {
+            "question":"Non-preemptive:",
+            "answer":"processes are only interrupted voluntarily (e.g., I/O\noperation or “nice” system call – yield())\nWindows 3.1 and DOS were non-preemtive"
+          },
+          {
+            "question":"Preemptive:  processes can be interrupted      or      ",
+            "answer":"processes can be interrupted forcefully or voluntarily"
+          },
+          {
+            "question":"Properties of preemptive: (4)",
+            "answer":"Typically driven by interrupts from a system clock.\nRequires additional context switches which generate overhead, too many\nof them should be avoided (recall last lecture)\nPrevents processes from monopolising the CPU\nMost popular modern operating systems are preemptive"
+          },
+          {
+            "question":"Performance Assessment\nUser oriented criteria: (3)\nSystem oriented criteria: (2)",
+            "answer":"User:\nResponse time: minimise the time between creating the job and its first\nexecution\nTurnaround time: minimise the time between job creation and completion\nPredictability: minimise the variance in processing times\nSystem:Throughput: maximise the number of jobs processed per hour\nFairness:\nAre processing power/waiting time equally distributed?\nAre some processes kept waiting excessively long (starvation)"
+          },
+
+          {
+            "question":"Evaluation criteria can be conflicting, i.e., improving the response time\n          may require      context switches, and hence      the throughput\n          and      the turn around time,",
+            "answer":"Evaluation criteria can be conflicting, i.e., improving the response time\n          may require more context switches, and hence worsen the throughput\n          and increase the turn around time,"
+          },
+          {
+            "question":"Algorithms considered:",
+            "answer":"1 First Come First Served (FCFS)/ First In First Out (FIFO)\n2 Shortest job first\n3 Round robin\n4 Priority queues"
+          },
+          {
+            "question":"First Come First Served is a non-preemtive algorithm ...",
+            "answer":"operates as a strict queueing\nmechanism and schedules the processes in the same order that they\nwere added to the queue"
+          },
+          {
+            "question":"First Come First Served advantage: (1)\n disadvantage: (2)",
+            "answer":"Advantages: positional fairness and easy to implement\nDisadvantages:\nFavours long processes over short ones (think of the supermarket\ncheckout!)\nCould compromise resource utilisation, i.e., CPU vs. I/O devices\n\nChatGPT:1. Convoy Effect:\nIn FCFS, processes are executed in the order they arrive. If a CPU-bound process (which requires a long burst of CPU time) arrives first, it can block all subsequent processes, including I/O-bound ones, from accessing the CPU.\nI/O-bound processes, which typically execute for a short time and then perform I/O operations, are left waiting in the queue. During this time, the CPU remains busy, but the I/O devices are idle.\nThis leads to inefficient use of I/O devices, as they could have been processing the I/O-bound tasks while the CPU-bound task was running.\n2. Idle Resources:\nWhen an I/O-bound process is stuck waiting behind a CPU-bound process in the queue, the I/O devices that the process could have utilised remain idle. Similarly, when an I/O-bound process is being served, the CPU might be idle for extended periods if no other CPU-bound processes are ready to execute.\nFCFS does not allow overlapping or concurrent utilisation of the CPU and I/O devices, which could improve overall system throughput.\n3. Lack of Pre-emption:\nFCFS does not pre-empt processes once they start executing. This lack of flexibility means that even if a high-priority or I/O-bound process arrives while a long-running CPU-bound process is executing, the system cannot switch to it. This rigid behaviour further reduces the efficiency of resource utilisation.\n4. Turnaround Time Variability:\nIn a mixed workload environment, I/O-bound processes could experience significantly longer turnaround times if they are stuck waiting behind CPU-bound processes. This not only affects the response time for these processes but also delays the completion of I/O tasks, which could indirectly affect subsequent processes.\nSummary:\nThe root issue with FCFS is its \"one-size-fits-all\" approach, where all processes are treated equally without considering their specific resource requirements (e.g., CPU-bound vs. I/O-bound). This lack of differentiation leads to underutilisation of system resources, especially when the workload is diverse. More advanced scheduling algorithms, like Shortest Job Next (SJN) or Round Robin (RR), often perform better in terms of resource utilisation by addressing these shortcomings."
+          },
+          {
+            "question":"Shortest Job First is a non-preemtive algorithm that ...",
+            "answer":"starts processes in order of ascending processing time using a provided/known estimate of the processing\n"
+          },
+          {
+            "question":"Shortest Job First advantage: (1)\n disadvantage: (3)",
+            "answer":"Advantages: always result in the optimal turn around time\nDisadvantages:\nStarvation might occur\nFairness and predictability are compromised\nProcessing times have to be known beforehand"
+          },
+          {
+            "question":"Round Robin is a preemptive version of FCFS that...\nprocesses run in the order that...\nProcesses are ... by the timer\n(1-2) ",
+            "answer":"forces context switches at periodic intervals or time slices\nProcesses run in the order that they were added to the queue\nProcesses are forcefully interrupted by the timer"
+          },
+
+          {
+            "question":"Round Robin advantages (2) disadvantages (3)",
+            "answer":"Advantages:\nImproved response time\nEffective for general purpose interactive/time sharing systems\nDisadvantages:\nIncreased context switching and thus overhead\nFavours CPU bound processes (which usually run long) over I/O\nprocesses (which do not run long)\nCan reduce to FCFS\n\n ChatGPT:Increased context switching and thus overhead:\nRound Robin scheduling operates by giving each process a fixed time slice (quantum) to execute. If the quantum is small, context switches occur more frequently as the CPU moves between processes. Each context switch involves saving the state of the current process and loading the state of the next process, which incurs overhead. A higher rate of context switching can lead to reduced CPU efficiency, as time is spent on administrative tasks rather than executing processes.\n\nFavours CPU-bound processes over I/O-bound processes:\nCPU-bound processes require longer bursts of CPU time, while I/O-bound processes spend more time waiting for I/O operations to complete. In RR scheduling, CPU-bound processes tend to consume their entire quantum and are frequently rescheduled, while I/O-bound processes often finish quickly and then wait for I/O completion. If the quantum is poorly chosen (too large), CPU-bound processes may dominate, delaying the turnaround time for I/O-bound processes. This imbalance can result in suboptimal performance, particularly for systems where responsiveness is critical.\n\nCan reduce to FCFS (First-Come, First-Served):\nIf the quantum is set too large (e.g., larger than the longest CPU burst among all processes), RR scheduling effectively becomes FCFS. This is because each process will complete its execution before the next one is scheduled, mimicking the behaviour of FCFS where processes run to completion in the order they arrive.\n\nBalancing the Quantum:\nTo address these challenges, choosing an appropriate quantum size is critical. A small quantum reduces response time for interactive systems but increases overhead. A large quantum reduces overhead but risks behaving like FCFS. Striking a balance is essential for achieving fair and efficient scheduling."
+          },
+          {
+            "question":"Priority Queues\nConcept: A preemptive algorithm that schedules processes by priority\n(high → low),A round robin is used within ...,\nThe process priority is saved in ...\n",
+            "answer":"A round robin is used within the same priority levels\nThe process priority is saved in the process control block"
+          },
+          {
+            "question":"Priority Queues advantage (1) disadvantage (1)",
+            "answer":"Advantages: can prioritise I/O bound jobs\nDisadvantages: low priority processes may suffer from starvation (when priorities are static)"
+          }
+        ]
+      },
+
+      {
+        "title": "Processes - Lecture 3",
+        "questions": [
+          {
+            "question": "Definition (CPU Burst Time)\n",
+            "answer": "The CPU burst time is the amount of time the process needs to complete\nexecution.\n"
+          },
+          {
+            "question": "A process consists of two fundamental units",
+            "answer": "Resources:\nA logical address space containing the process image (program, data, heap,\nstack)\nFiles, I/O devices, I/O channels, . . .\nExecution trace, i.e., instructions that get run on the CPU"
+          },
+          {
+            "question": "A process can                 between multiple execution traces (      )",
+            "answer": "A process can share its resources between multiple execution traces (threads)"
+          },
+          {
+            "question": "Every thread has its own execution context (e.g. ...(3))\n",
+            "answer": "Every thread has its own execution context (e.g. program counter, stack,\nregisters)\n"
+          },
+          {
+            "question": "All threads have access to the process’ shared resources (2)",
+            "answer": "File handles: one thread opens a file, all threads of the same process can\naccess the file\nGlobal variables, heap memory, . . ."
+          },
+          {
+            "question": "Similar to processes, threads have: (4)",
+            "answer": "States and transitions (new, running, blocked, ready, terminated)\nA thread control block (TCB)\nA thread table of TCBs\nEach thread has a thread id (TID) (the term TID seems less common in\npractice than PID).\n"
+          },
+          {
+            "question": "Process versus thread resources",
+            "answer": "Processes | Threads\nAddress space | Program Counter\nGlobal variables | Registers\nOpen files Stack\nChild processes\n"
+          },
+          {
+            "question": "Threads incur            to create/terminate/switch (             remains the same for threads of the same process)",
+            "answer": "Threads incur less overhead to create/terminate/switch (address space\nremains the same for threads of the same process)"
+          },
+          {
+            "question": "Some CPUs have direct hardware support for multi-threading. Typically, they can offer up to [] hardware threads per core",
+            "answer": "8"
+          },
+          {
+            "question": "..., as threads share memory by default.",
+            "answer": "Inter-thread communication is easier/faster than interprocess\ncommunication, as threads share memory by default."
+          },
+          {
+            "question": "No               are required in the address space. Threads\nare assumed to be cooperating, with a common goal.",
+            "answer": "No protection boundaries are required in the address space. Threads\nare assumed to be cooperating, with a common goal."
+          },
+          {
+            "question": "User Threads\n ...-to-...\nThread management (creating, destroying, scheduling, thread control\nblock manipulation) is carried out in            with the help of a      library\nThe process maintains a              managed by the runtime system\nwithout the      ’s knowledge\n",
+            "answer": "User Threads\nMany-to-One\nThread management (creating, destroying, scheduling, thread control\nblock manipulation) is carried out in user space with the help of a user library\nThe process maintains a thread table managed by the runtime system\nwithout the kernel’s knowledge\n"
+          },
+          {
+            "question": "User Threads advantages (3) and disadvantages (3)",
+            "answer": "Advantages:\nThreads are in user space (i.e., no mode switches required)\nFull control over the thread scheduler\nOS independent (threads can run on OS that do not support them)\nDisadvantages:\nBlocking system calls suspend the entire process (user threads are\nmapped onto a single process, managed by the kernel)\nNo true parallelism (a process is scheduled on a single CPU)\nNon-preemptive as no mechanism such as interrupts\n"
+          },
+          {
+            "question": "Kernel Threads\n ...-to-... \nThe        manages the threads, user application accesses threading\nfacilities through        and       \nThread table is in the        , containing thread control blocks (subset of                     )\nIf a thread blocks, the kernel chooses a thread from                process\nAdvantages: (3) Disadvantage: (1)",
+            "answer": "Kernel Threads\nOne-to-One\nThe kernel manages the threads, user application accesses threading\nfacilities through API and system calls\nThread table is in the kernel, containing thread control blocks (subset of process control blocks)\nIf a thread blocks, the kernel chooses a thread from same or different process\nAdvantages:\nTrue parallelism can be achieved\nPreemptive\nNo run-time system needed in user space\nFrequent mode switches take place, resulting in lower performance\n"
+          },
+          {
+            "question": "Performance\nUser Threads vs. Kernel Threads vs. Processes",
+            "answer": "overhead/"
+          },
+          {
+            "question": "Hybrid Implementations\n ...-to-... \nUser threads are        onto kernel threads",
+            "answer": "many; many; multiplexed"
+          },
+          {
+            "question": "Hybrid Implementations\nKernel sees and schedules the kernel threads (a        number)\nUser application sees user threads and creates/schedules these (an\n“      ” number)",
+            "answer": "limited; unrestricted"
+          },
+
+          {
+            "question": "In which situations would you favour user level threads? ",
+            "answer": "Favour User-Level Threads:\nLow Overhead and High Performance:\n\nUser-level threads are managed entirely by a user-level thread library, without kernel involvement for thread creation, scheduling, or synchronisation.\nThis makes operations like thread switching extremely fast and efficient, as no system calls are required.\nExample: High-performance applications where context-switching overhead must be minimised, such as real-time simulations or lightweight task scheduling systems.\n\nLimited Kernel Support for Threads:\n\nOn systems or environments where the operating system does not natively support multithreading (e.g., older OSs or embedded systems), user-level threads are the only option.\nExample: Running applications on lightweight embedded systems without full-fledged kernel threading.\n\nCustomised Scheduling:\n\nApplications requiring custom thread scheduling (e.g., priority-based or cooperative scheduling) can benefit from user-level threads since the application has complete control over thread management.\nExample: Game engines or multimedia applications that require precise control over task timing.\n\nLarge Number of Threads:\n\nUser-level threads are lightweight in terms of memory and processing overhead, allowing thousands or even millions of threads to be created without straining system resources.\nExample: Applications like web servers or database management systems that handle a large number of lightweight tasks concurrently."
+          },
+          {
+            "question": "In which situation would you definitely favour kernel level threads?",
+            "answer": "Favour Kernel-Level Threads:\nTrue Parallelism on Multiprocessors:\n\nKernel-level threads are directly managed by the operating system, and the kernel schedules them across multiple CPUs or cores. This allows true parallelism, which user-level threads cannot achieve directly since they are restricted to a single kernel thread.\nExample: Compute-intensive scientific simulations or machine learning training that benefit from parallel execution on multiple cores.\n\nBlocking System Calls:\n\nIf a thread makes a blocking system call (e.g., waiting for I/O), only that thread is blocked in kernel-level threading. In user-level threading, the entire process could be blocked, halting all other threads.\nExample: Applications performing frequent I/O operations, such as file servers, network servers, or streaming services.\n\nPre-emptive Scheduling:\n\nKernel-level threads are pre-emptively scheduled by the operating system, ensuring fair CPU time allocation among threads and avoiding starvation.\nExample: Multi-user systems where fairness and responsiveness are critical, such as operating system schedulers or virtual machines.\n\nIntegration with Kernel Features:\n\nKernel-level threads have direct access to OS features such as thread prioritisation, inter-thread communication mechanisms, and synchronisation primitives.\nExample: Complex applications like databases or operating system kernels requiring advanced synchronisation and inter-thread communication.\n\nFault Isolation:\n\nKernel-level threads provide better fault isolation. If a user-level thread crashes, it can affect all threads in the process. With kernel-level threads, the kernel can isolate and manage thread crashes more effectively.\nExample: Safety-critical applications like medical software or aerospace systems where fault tolerance is crucial.\n\n"
+          },
+          {
+            "question": "Why do threads have independent stacks?",
+            "answer": "Threads share the process's memory but need independent stacks to store local variables, function calls, and return addresses for each thread. Without independent stacks, threads would overwrite each other's data, leading to corruption."
+          },
+          {
+            "question": "Is it always necessary to call pthread_exit when ending a thread?\n",
+            "answer": "No, a thread can end by returning from its start routine. However, pthread_exit is needed if the thread must ensure cleanup handlers are run or if it must exit without returning from the function."
+          },
+          {
+            "question": "What is the minimum number of threads a process can have?",
+            "answer": "The minimum is one. A single-threaded process only has the main thread."
+          },
+          {
+            "question": "Can user threads make good use of concurrent hardware?",
+            "answer": "No, user threads cannot directly utilise multiple CPU cores unless mapped to kernel threads, as the OS scheduler only recognises kernel threads for hardware concurrency."
+          }
+        ]
+      },
+      {
+        "title": "Concurrency - Lecture 1",
+        "questions": [
+          {
+            "question": "What are the benefits of multi-programming/multi-processing?",
+            "answer": "It improves system utilisation by allowing concurrent execution of threads and processes that can share resources such as memory and devices."
+          },
+          {
+            "question": "What can make program outcomes unpredictable in concurrent execution?",
+            "answer": "Sharing data can lead to inconsistencies due to interruptions, and the outcome may depend on the order in which code gets executed on the CPU."
+          },
+          {
+            "question": "What are the three non-atomic actions in 'counter++'?",
+            "answer": "1. Read the value of the counter from memory to a register. 2. Add one to the value in the register. 3. Store the register's value back into the counter in memory."
+          },
+          {
+            "question": "What is a race condition?",
+            "answer": "A race condition occurs when a program's behaviour depends on the timing of computation, typically caused by multiple threads accessing shared data without synchronisation."
+          },
+          {
+            "question": "What is a critical section, and how is it related to mutual exclusion?",
+            "answer": "A critical section is a portion of code that can only be executed by one thread at a time. Mutual exclusion ensures that only one thread can enter the critical section to prevent race conditions."
+          },
+          {
+            "question": "What are the three requirements for critical section implementations?",
+            "answer": "1. Mutual exclusion: Only one process can be in its critical section at any time. 2. Progress: Processes not in the critical section do not prevent others from entering.\nDeciding which of the competing processes gets access to the critical section cannot be postponed indefinitely.3. Fairness/bounded waiting:: fairly distributed waiting times/processes (Processes are not indefinitely delayed)"
+          },
+          {
+            "question": "What are common approaches to enforcing mutual exclusion?",
+            "answer": "1. Software-based: Peterson’s solution. 2. Hardware-based: test_and_set(), swap_and_compare(). 3. OS-based: Mutexes or semaphores, where processes are blocked until locks are available."
+          },
+          {
+            "question": "What is deadlock, as defined by Tanenbaum?",
+            "answer": "A set of threads is deadlocked if each thread in the set is waiting for an event that only another thread in the set can cause."
+          },
+          {
+            "question": "What are the four conditions for deadlocks to occur (Coffman et al.)?",
+            "answer": "1. Mutual exclusion: A resource can only be assigned to one process at a time. 2. Hold and wait: A process holding resources can request new ones. 3. No preemption: Resources cannot be forcefully taken. 4. Circular wait: Processes form a circular chain, waiting for each other's resources."
+          },
+          {
+            "question": "How can deadlocks be avoided?",
+            "answer": "Ensure that at least one of the four conditions for deadlocks is not satisfied, such as avoiding circular wait by enforcing resource request order."
+          }
+        ]
+      },
+
+      {
+        "title": "Concurrency - Lecture 2",
+        "questions": [
+          {
+            "question": "Peterson's solution in modern computer can have problems: (4)",
+            "answer": "1. Instruction reordering\n2. Having multiple cores\n3. Funky caching\n 4. Compiler optimizations"
+          },
+          {
+            "question": "",
+            "answer": ""
+          },
+          {
+            "question": "",
+            "answer": ""
+          }
+        ]
+      },
+
+      {
+        "title": "Concurrency - Lecture 3",
+        "questions": [
+
+          {
+            "question": "Is a binary semaphore the same thing as a mutex?",
+            "answer": "No, a binary semaphore and a mutex are not the same. Both are used for synchronisation, but they differ in purpose and behaviour:\n\nBinary Semaphore: A signalling mechanism primarily used for controlling access to a resource by signalling between threads. Any thread can release a semaphore.\nMutex: A locking mechanism used for mutual exclusion, ensuring that only one thread can access a critical section at a time. Only the thread that locks the mutex can unlock it."
+          },
+
+          {
+            "question": "When should you prefer a mutex rather than a binary semaphore?",
+            "answer": "You should prefer a mutex when:\n\nYou need strict ownership of the lock, meaning only the thread that locked the resource can unlock it.\nYou want to enforce mutual exclusion for critical sections of code.\nYou need features like deadlock detection or priority inversion handling (which are often provided by mutex implementations in modern operating systems).\nA binary semaphore can be used when:\n\nYou need a signalling mechanism between threads or processes.\nOwnership of the lock is not required (any thread can signal the semaphore)."
+          },
+
+          {
+            "question": "Is there a straightforward way to check concurrent code is correct?",
+            "answer": "Code Review: Ensure the code follows best practices for synchronisation, like proper use of locks, avoiding race conditions, and preventing deadlocks.\nStatic Analysis Tools: Use tools like ThreadSanitizer or Helgrind to detect potential issues such as race conditions or incorrect use of synchronisation primitives.\nUnit Tests: Write tests that simulate concurrent execution. Use mock threads and stress tests to verify correctness under various conditions.\nFormal Verification: For critical systems, apply formal methods like model checking to prove the absence of race conditions or deadlocks.\nDebugging and Logging: Use tools to trace execution order, lock acquisitions/releases, and thread interactions to identify issues dynamically.\nDeterministic Execution: Some environments and tools allow you to run threads deterministically, which can make it easier to identify errors."
+          },
+
+          {
+            "question": "Semaphores are another abstraction for synchronisation\nThey have a natural number       , which changes during their use.\nWe distinguish between             and            \n",
+            "answer": "Semaphores are another abstraction for synchronisation\nThey have a natural number capacity, which changes during their use.\nWe distinguish between binary (2 valued) and counting semaphores\n"
+          },
+          {
+            "question": "Two functions are used to manipulate semaphores",
+            "answer": "wait(), which decrements the capacity - blocks if capacity 0\npost() which increments the capacity - any thread can post."
+          },
+          {
+            "question":"Conceptual definition of a semaphore",
+            "answer": "typedef struct {\nint count;\nstruct process * list;\n} semaphore;"
+          },
+          {
+            "question":"Conceptual implementation of a wait()\n",
+            "answer": "void wait(semaphore* S) {\nS->count--;\nif(S->count < 0) {\n//add process to S->list\nblock(); // system call\n}\n}\n"
+          },
+          {
+            "question":"Conceptual implementation of post()",
+            "answer": "void post(semaphore* S) {\nS->count++;\nif(S->count <= 0) {\n// remove process P from S->list\nwakeup(P);\n}\n}\n"
+          },
+          {
+            "question":"How to avoid real world concurrent code issues? (5)",
+            "answer": "Never ignore compiler warnings.\nAlways check return values - slide examples don’t for space reasons.\nTest code thoroughly - implicit assumption Mac would work like Linux was wrong!\nBe aware of platform specific issues such as sem_unlink behaviour on Mac.\nUse the appropriate concurrency primitives - the example really needed a mutex."
+          }
+        ]
+      },
+      {
         "title": "Memory - Lecture 1",
         "questions": [
           {
