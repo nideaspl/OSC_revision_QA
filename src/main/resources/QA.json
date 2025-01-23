@@ -258,6 +258,52 @@
         ]
       },
       {
+        "title": "Processes 4: Further Scheduling",
+        "questions": [
+          {
+            "question": "What is a priority queue in scheduling?",
+            "answer": "A queue where jobs are assigned different priority levels. Jobs of the same priority are executed in a round-robin fashion."
+          },
+          {
+            "question": "What are multi-level feedback queues?",
+            "answer": "A scheduling method where jobs can move between queues with different priorities. This allows for dynamic priority changes to prioritise I/O-bound processes and prevent starvation."
+          },
+          {
+            "question": "How do multi-level feedback queues prevent starvation?",
+            "answer": "By promoting the priority of processes that are starved of CPU time, ensuring they eventually get executed."
+          },
+          {
+            "question": "What is priority inversion, and how can it be addressed?",
+            "answer": "Priority inversion occurs when a high-priority process is waiting for a resource held by a low-priority process. It can be addressed by temporarily boosting the priority of the lower-priority process."
+          },
+          {
+            "question": "What are the key features of the Completely Fair Scheduler (CFS) in Linux?",
+            "answer": "CFS aims to approximate fair CPU time sharing by tracking virtual CPU time, using a red-black tree for task ordering, and implementing target latency and minimum granularity to balance fairness and efficiency."
+          },
+          {
+            "question": "How does the CFS account for task priorities?",
+            "answer": "It scales virtual CPU time based on task priority. Higher-priority tasks use less virtual time per real-time unit, allowing them to execute more frequently."
+          },
+          {
+            "question": "What is space-sharing scheduling?",
+            "answer": "An approach where related threads are allocated to dedicated CPUs without multiprogramming, keeping them running together to minimise context switching."
+          },
+          {
+            "question": "What is gang scheduling?",
+            "answer": "A method of scheduling related threads to run simultaneously on different CPUs with synchronised time slices. It combines time and space sharing to improve efficiency."
+          },
+          {
+            "question": "What are the advantages and disadvantages of shared queues in multi-processor scheduling?",
+            "answer": "Advantages: Automatic load balancing. Disadvantages: Contention for queues and invalidation of CPU cache and TLB when tasks move between CPUs."
+          },
+          {
+            "question": "What is the advantage of scheduling threads that communicate with each other at the same time?",
+            "answer": "It improves efficiency by reducing latency in message passing and ensuring synchronised execution of cooperating threads."
+          }
+        ]
+      },
+
+      {
         "title": "Concurrency - Lecture 1",
         "questions": [
           {
@@ -410,7 +456,107 @@
             "answer": "Memory management has evolved from mono-programming with absolute addressing to multi-programming with fixed (non-)equal partitions to improve resource utilisation and CPU efficiency."
           }
         ]
+      },
+      {
+        "title": "Memory Management 2",
+        "questions": [
+          {
+            "question": "What are the goals of memory management discussed in this lecture?",
+            "answer": "The goals include code relocation and protection, dynamic partitioning and swapping, and segmentation."
+          },
+          {
+            "question": "What is relocation in memory management?",
+            "answer": "Relocation refers to mapping the logical address space onto the physical address space, allowing processes to run at different locations in physical memory."
+          },
+          {
+            "question": "What is protection in memory management?",
+            "answer": "Protection ensures that multiple processes in memory cannot access each other's allocated memory, enforcing memory safety."
+          },
+          {
+            "question": "What is the role of base and bound registers in runtime relocation?",
+            "answer": "The base register stores the starting address of a partition, and the bound register holds its size. At runtime, the logical address is added to the base to generate a physical address, which is then checked against the bound."
+          },
+          {
+            "question": "What is dynamic partitioning in memory management?",
+            "answer": "Dynamic partitioning allocates memory exactly as required by a process, creating variable-sized partitions to reduce internal fragmentation."
+          },
+          {
+            "question": "What are the challenges of dynamic partitioning?",
+            "answer": "Challenges include external fragmentation, time-consuming swapping, leftover small memory blocks ('holes'), and overhead from memory compaction."
+          },
+          {
+            "question": "What is segmentation in memory management?",
+            "answer": "Segmentation splits the logical address space into segments (e.g., code, data, stack), each with its own base and bound pair, allowing fine-grained memory allocation."
+          },
+          {
+            "question": "What are the advantages of segmentation over dynamic partitioning?",
+            "answer": "Segmentation reduces external fragmentation by only loading relevant segments into memory and supports segment-specific protection bits (e.g., read, write, execute)."
+          },
+          {
+            "question": "What is a segmentation table, and what does it contain?",
+            "answer": "A segmentation table maps segments to physical memory. It contains the segment index, base address, bound size, and protection bits (RWX)."
+          },
+          {
+            "question": "What is the take-home message from this lecture?",
+            "answer": "The lecture covers contiguous memory schemes (mono-programming, static and dynamic partitioning), the principles of relocation and protection, internal and external fragmentation, segmentation, and segmentation tables."
+          }
+        ]
+      },
+      {
+        "title": "Memory Management 3",
+        "questions": [
+          {
+            "question": "What are the goals for memory management covered in this lecture?",
+            "answer": "Managing free space with bitmaps and linked lists, allocation policies (first fit, best fit, next fit, worst fit, quick fit, buddy algorithm), preventing fragmentation through non-contiguous memory management, paging (page tables and address translation), and segmentation."
+          },
+          {
+            "question": "What is a bitmap, and how is it used in free space management?",
+            "answer": "A bitmap is a data structure where each bit represents a memory block's status (0 for free, 1 for used). It tracks free memory but can be slow for searches and impractical for small blocks due to size overhead."
+          },
+          {
+            "question": "What are the drawbacks of using bitmaps for free space management?",
+            "answer": "Bitmaps can become large and inefficient for small blocks, making searches slower. Larger blocks reduce this inefficiency but increase internal fragmentation."
+          },
+          {
+            "question": "What is a linked list, and how is it used in free space management?",
+            "answer": "A linked list is a variable-length data structure where each entry contains the memory block's start address, size, allocation status, and a pointer to the next entry. It provides more flexibility for variable-sized partitions."
+          },
+          {
+            "question": "What is the difference between first fit and best fit allocation policies?",
+            "answer": "First fit allocates the first available block large enough for the request, while best fit searches the entire list for the smallest suitable block, which may leave small unusable fragments."
+          },
+          {
+            "question": "What is the next fit allocation policy, and how does it compare to first fit?",
+            "answer": "Next fit starts searching from the last allocated position rather than the beginning of the list. It distributes allocations more evenly but performs worse in practice than first fit."
+          },
+          {
+            "question": "What is the quick fit allocation policy?",
+            "answer": "Quick fit maintains separate lists for commonly requested block sizes, making allocation faster but increasing fragmentation and complicating coalescing of free blocks."
+          },
+          {
+            "question": "What is coalescing in memory management?",
+            "answer": "Coalescing merges adjacent free memory blocks into one larger block to reduce fragmentation and make memory allocation more efficient."
+          },
+          {
+            "question": "What is paging in memory management?",
+            "answer": "Paging divides memory into fixed-size blocks (pages and frames), allowing non-contiguous allocation. This reduces fragmentation and simplifies address translation."
+          },
+          {
+            "question": "How does address translation work in paging?",
+            "answer": "A logical address is divided into a page number and an offset. The page number is used to look up the corresponding frame in the page table, and the offset is added to the frame's base address to determine the physical address."
+          },
+          {
+            "question": "What is the difference between a page and a frame?",
+            "answer": "A page is a block of memory in the logical address space, while a frame is a block of memory in the physical address space. Pages are mapped onto frames during paging."
+          },
+          {
+            "question": "What are the advantages of paging?",
+            "answer": "Paging eliminates external fragmentation, simplifies memory allocation, and supports virtual memory by allowing processes to use non-contiguous physical memory."
+          }
+        ]
       }
+
+
     ]
   }
   
